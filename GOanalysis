@@ -1,0 +1,13 @@
+Best annotated Sequence
+Tumor necrosis factor
+
+It has 185 biological processes
+
+20262 total BP labelsin dataset
+
+GO:0006357 occurs 1174 times
+Any process that modulates the frequency, rate or extent of transcription mediated by RNA polymerase II. 
+
+17232 samples habe BP labels
+
+word2vec needs a lot of data on the topic so It's not a good idea
