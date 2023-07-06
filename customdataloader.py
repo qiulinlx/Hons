@@ -34,8 +34,9 @@ y_train = label_encoder.fit_transform(y_train)
 y_test = label_encoder.transform(y_test)
 
 X_train=torch.tensor(X_train.values,  dtype=torch.float32)
+X_train=X_train.unsqueeze(-1)
 y_train=torch.tensor(y_train,  dtype=torch.float32)
-
+print(X_train)
 X_test=torch.tensor(X_test.values,  dtype=torch.float32)
 y_test=torch.tensor(y_test,  dtype=torch.float32)
 
@@ -59,7 +60,7 @@ trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=bts, shuffle=True, num_workers=5)
 #valloader = torch.utils.data.DataLoader(valset, batch_size=bts, shuffle=False, num_workers=5)
 #testloader = torch.utils.data.DataLoader(testset, batch_size=bts, shuffle=False, num_workers=5)
-d_input=10
+d_input=1
 d_output = 1
 
 
@@ -77,7 +78,8 @@ class S4Model(nn.Module):
         super().__init__()
 
         self.prenorm = prenorm
-        print(d_model)
+        print(d_input, 'pause', d_model)
+
         # Linear encoder (d_input = 1 for grayscale and 3 for RGB)
         self.encoder = nn.Linear(d_input, d_model)
 
@@ -91,7 +93,6 @@ class S4Model(nn.Module):
             )
             self.norms.append(nn.LayerNorm(d_model))
             #self.dropouts.append(dropout_fn(dropout))
-
         # Linear decoder
         self.decoder = nn.Linear(d_model, d_output)
 
@@ -194,17 +195,26 @@ optimizer, scheduler = setup_optimizer(
     model, lr=0.001, weight_decay=0.001, epochs=10
 )
 
-model.train
-for input, target in trainloader:
-        print(input)
+model.train()
+for inputs, targets in trainloader:
         #Perform forward pass
-        output=model(input)
-        loss = criterion((output), target)
+        targets= targets.long()
+
+        output=model(inputs)
+        loss = criterion((output), targets)
         optimizer.zero_grad()
 
         #Perform backward pass
         loss.backward()
         optimizer.step()
-
-
+        print('training')
  
+
+model.eval()
+for inputs, targets in trainloader:
+        #Perform forward pass
+        targets= targets.long()
+
+        output=model(inputs)
+
+        print(output)
